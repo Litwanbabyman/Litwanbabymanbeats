@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Litwanbabyman — Type Beats</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FFF6F4;
+    --bg-raised:#FFFFFF;
+    --ink:#4A3238;
+    --ink-dim:#9C7E82;
+    --pink:#F5B4C4;
+    --pink-deep:#C9647E;
+    --sage:#84976D;
+    --gold:#C68F49;
+    --line:#F2DCDE;
+    --shadow: 0 10px 30px rgba(201,100,126,0.14);
+    --nav-bg: rgba(255,246,244,0.75);
+    --yt-bg: #F0DEE0;
+  }
+  body.dark-mode{
+    --bg:#0B0607;
+    --bg-raised:#170D0E;
+    --ink:#F3E6E6;
+    --ink-dim:#B08A8D;
+    --pink:#8A1220;
+    --pink-deep:#C81E3A;
+    --sage:#7C8B6E;
+    --gold:#D98A3D;
+    --line:#2A1517;
+    --shadow: 0 10px 34px rgba(200,30,58,0.35);
+    --nav-bg: rgba(11,6,7,0.75);
+    --yt-bg: #1C1112;
+  }
+  *,
+  *::before,
+  *::after{
+    transition: background-color .7s ease, color .7s ease, border-color .7s ease, box-shadow .7s ease;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Poppins',sans-serif;
+    font-weight:300;
+    -webkit-font-smoothing:antialiased;
+    position:relative;
+    overflow-x:hidden;
+  }
+  ::selection{background:var(--pink);color:#fff;}
+  a{color:inherit;}
+
+  /* ---------- FALLING PETALS / BLOOD DRIPS ---------- */
+  .petal-field{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:5;
+    overflow:hidden;
+  }
+  .petal{
+    position:absolute;
+    top:-5%;
+    opacity:0.75;
+    animation-name:fall, sway;
+    animation-timing-function:linear, ease-in-out;
+    animation-iteration-count:infinite, infinite;
+  }
+  .petal.bloom{
+    background:linear-gradient(135deg,#F5B4C4,#C9647E);
+    border-radius:0% 60% 60% 60%;
+  }
+  .petal.drip{
+    background:linear-gradient(135deg,#C81E3A 0%,#8A1220 60%,#4A0812 100%);
+    border-radius:0% 60% 60% 60%;
+    box-shadow:0 4px 10px rgba(0,0,0,0.35), inset -3px -3px 6px rgba(0,0,0,0.25);
+    opacity:0.85;
+    animation-name:fall, sway;
+    animation-timing-function:linear, ease-in-out;
+    animation-iteration-count:infinite, infinite;
+  }
+  @keyframes fall{
+    from{ transform:translateY(-10vh) rotate(0deg); }
+    to{ transform:translateY(110vh) rotate(340deg); }
+  }
+  @keyframes sway{
+    0%,100%{ margin-left:0px; }
+    50%{ margin-left:40px; }
+  }
+
+  /* ---------- DARK MODE TOGGLE ---------- */
+  .mode-toggle{
+    position:fixed;
+    bottom:24px;
+    right:24px;
+    z-index:30;
+    font-family:'Poppins',sans-serif;
+    font-size:12.5px;
+    font-weight:500;
+    letter-spacing:0.03em;
+    padding:13px 22px;
+    border-radius:30px;
+    border:1px solid var(--pink-deep);
+    background:var(--bg-raised);
+    color:var(--pink-deep);
+    cursor:pointer;
+    box-shadow:var(--shadow);
+  }
+  .mode-toggle:hover{transform:translateY(-2px);}
+
+  .mode-flash{
+    position:fixed;
+    inset:0;
+    z-index:25;
+    pointer-events:none;
+    opacity:0;
+    background:radial-gradient(circle at 50% 35%, rgba(200,30,58,0.6), rgba(10,4,5,0.97) 72%);
+  }
+  .mode-flash.active{animation:modeFlash 1.15s ease forwards;}
+  @keyframes modeFlash{
+    0%{opacity:0;}
+    18%{opacity:1;}
+    100%{opacity:0;}
+  }
+
+  body.dark-mode .branch{
+    opacity:0.3;
+    filter:grayscale(0.65) brightness(0.45) saturate(1.6) hue-rotate(-10deg);
+  }
+
+  /* ---------- NAV ---------- */
+  .nav{
+    position:relative;
+    z-index:10;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:26px 6vw;
+    font-family:'Poppins',sans-serif;
+    font-size:13px;
+    letter-spacing:0.04em;
+    color:var(--ink-dim);
+    border-bottom:1px solid var(--line);
+    background:var(--nav-bg);
+    backdrop-filter:blur(6px);
+  }
+  .nav-brand{
+    color:var(--pink-deep);
+    font-family:'Cormorant Garamond',serif;
+    font-style:italic;
+    font-weight:600;
+    font-size:20px;
+  }
+  .nav-links a{
+    text-decoration:none;
+    margin-left:28px;
+    color:var(--ink-dim);
+    transition:color .25s ease;
+  }
+  .nav-links a:hover{color:var(--pink-deep);}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative;
+    z-index:2;
+    padding:13vh 6vw 9vh;
+    overflow:hidden;
+    border-bottom:1px solid var(--line);
+  }
+  .branch{
+    position:absolute;
+    top:-40px;
+    right:-40px;
+    width:min(46vw,460px);
+    opacity:0.9;
+    z-index:0;
+    pointer-events:none;
+  }
+  .hero-inner{position:relative;z-index:1;max-width:680px;}
+  .eyebrow{
+    font-family:'Poppins',sans-serif;
+    font-size:12.5px;
+    letter-spacing:0.16em;
+    text-transform:uppercase;
+    color:var(--sage);
+    margin:0 0 18px;
+    font-weight:500;
+  }
+  h1.title{
+    font-family:'Cormorant Garamond',serif;
+    font-weight:600;
+    font-style:italic;
+    font-size:clamp(46px,9vw,104px);
+    line-height:1.02;
+    letter-spacing:-0.01em;
+    margin:0;
+    color:var(--ink);
+  }
+  .title .accent{color:var(--pink-deep);}
+  .subtitle{
+    font-family:'Poppins',sans-serif;
+    font-weight:300;
+    font-size:clamp(14px,1.7vw,17px);
+    line-height:1.7;
+    color:var(--ink-dim);
+    margin:22px 0 40px;
+    max-width:520px;
+  }
+  .subtitle b{color:var(--pink-deep);font-weight:500;}
+
+  .hero-cta{
+    margin-top:8px;
+    display:flex;
+    gap:16px;
+    flex-wrap:wrap;
+  }
+  .btn{
+    font-family:'Poppins',sans-serif;
+    font-size:13.5px;
+    letter-spacing:0.02em;
+    padding:15px 28px;
+    border-radius:30px;
+    text-decoration:none;
+    display:inline-block;
+    border:1px solid var(--pink-deep);
+    transition:all .25s ease;
+  }
+  .btn-solid{
+    background:var(--pink-deep);
+    border-color:var(--pink-deep);
+    color:#fff;
+    font-weight:500;
+    box-shadow:var(--shadow);
+  }
+  .btn-solid:hover{background:#B75A72;transform:translateY(-1px);}
+  .btn-ghost{color:var(--pink-deep);background:transparent;}
+  .btn-ghost:hover{background:rgba(232,137,159,0.08);}
+
+  /* ---------- TRACKLIST ---------- */
+  .section{
+    position:relative;
+    z-index:2;
+    padding:8vh 6vw;
+  }
+  .section-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    margin-bottom:36px;
+    flex-wrap:wrap;
+    gap:12px;
+  }
+  .section-head h2{
+    font-family:'Cormorant Garamond',serif;
+    font-style:italic;
+    font-weight:600;
+    font-size:clamp(30px,4vw,44px);
+    margin:0;
+    color:var(--ink);
+  }
+  .section-head p{
+    font-family:'Poppins',sans-serif;
+    font-size:12px;
+    color:var(--ink-dim);
+    letter-spacing:0.04em;
+    margin:0;
+  }
+
+  /* ---------- FILTER / SEARCH ---------- */
+  .filter-bar{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    align-items:center;
+    margin-bottom:28px;
+  }
+  .filter-search{
+    flex:1;
+    min-width:180px;
+    padding:12px 20px;
+    border-radius:30px;
+    border:1px solid var(--line);
+    background:var(--bg-raised);
+    font-family:'Poppins',sans-serif;
+    font-size:13px;
+    color:var(--ink);
+    outline:none;
+    transition:border-color .2s ease;
+  }
+  .filter-search::placeholder{color:var(--ink-dim);}
+  .filter-search:focus{border-color:var(--pink-deep);}
+  .filter-pills{display:flex;gap:8px;flex-wrap:wrap;}
+  .filter-pill{
+    font-family:'Poppins',sans-serif;
+    font-size:12.5px;
+    padding:9px 18px;
+    border-radius:30px;
+    border:1px solid var(--line);
+    background:var(--bg-raised);
+    color:var(--ink-dim);
+    cursor:pointer;
+    transition:all .2s ease;
+  }
+  .filter-pill:hover{border-color:var(--pink-deep);color:var(--pink-deep);}
+  .filter-pill.active{border-color:var(--pink-deep);color:var(--pink-deep);background:rgba(201,100,126,0.08);}
+  .no-results{
+    font-family:'Poppins',sans-serif;
+    font-size:13.5px;
+    color:var(--ink-dim);
+    text-align:center;
+    padding:40px 0;
+  }
+
+  /* ---------- BADGES ---------- */
+  .badge{
+    display:inline-block;
+    font-family:'Poppins',sans-serif;
+    font-size:10px;
+    font-weight:600;
+    letter-spacing:0.04em;
+    text-transform:uppercase;
+    padding:3px 10px;
+    border-radius:20px;
+    margin-left:8px;
+    vertical-align:middle;
+  }
+  .badge-new{background:rgba(132,151,109,0.14);color:var(--sage);border:1px solid var(--sage);}
+  .badge-hot{background:rgba(198,143,73,0.14);color:var(--gold);border:1px solid var(--gold);}
+
+  .track{
+    background:var(--bg-raised);
+    border:1px solid var(--line);
+    border-radius:20px;
+    margin-bottom:16px;
+    overflow:hidden;
+    transition:box-shadow .3s ease, transform .3s ease;
+  }
+  .track:hover{box-shadow:var(--shadow);}
+
+  .track-row{
+    display:grid;
+    grid-template-columns:48px 1fr auto auto;
+    align-items:center;
+    gap:22px;
+    padding:22px 26px;
+    cursor:pointer;
+  }
+  .track-num{
+    font-family:'Cormorant Garamond',serif;
+    font-style:italic;
+    color:var(--pink-deep);
+    font-size:22px;
+  }
+  .track-info h3{
+    margin:0 0 8px;
+    font-family:'Poppins',sans-serif;
+    font-weight:500;
+    font-size:clamp(16px,2vw,19px);
+    color:var(--ink);
+  }
+  .track-tags{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+  }
+  .tag{
+    font-family:'Poppins',sans-serif;
+    font-size:10.5px;
+    letter-spacing:0.02em;
+    color:var(--sage);
+    border:1px solid var(--sage);
+    border-radius:20px;
+    padding:3px 11px;
+    opacity:0.9;
+    font-weight:400;
+  }
+  .track-price{
+    font-family:'Poppins',sans-serif;
+    font-weight:600;
+    color:var(--gold);
+    font-size:15px;
+    white-space:nowrap;
+  }
+  .track-toggle{
+    font-family:'Poppins',sans-serif;
+    font-size:12px;
+    color:var(--ink-dim);
+    border:1px solid var(--line);
+    border-radius:20px;
+    padding:9px 16px;
+    background:none;
+    white-space:nowrap;
+    transition:all .25s ease;
+  }
+  .track-row:hover .track-toggle{color:var(--pink-deep);border-color:var(--pink-deep);}
+
+  .track-panel{
+    max-height:0;
+    overflow:hidden;
+    transition:max-height .4s ease;
+  }
+  .track-panel.open{max-height:640px;}
+  .track-panel-inner{
+    padding:4px 26px 30px;
+    display:grid;
+    grid-template-columns:1.3fr 1fr;
+    gap:26px;
+  }
+  .yt-wrap{
+    position:relative;
+    padding-top:56.25%;
+    background:var(--yt-bg);
+    border-radius:14px;
+    overflow:hidden;
+  }
+  .yt-wrap iframe{
+    position:absolute;top:0;left:0;width:100%;height:100%;border:0;
+  }
+  .yt-fallback{
+    display:block;
+    text-align:center;
+    font-size:12px;
+    color:var(--ink-dim);
+    margin-top:10px;
+  }
+  .yt-fallback a{
+    color:var(--pink-deep);
+    text-decoration:none;
+    font-weight:500;
+  }
+  .yt-fallback a:hover{text-decoration:underline;}
+
+  .panel-side{display:flex;flex-direction:column;justify-content:space-between;}
+  .panel-desc{
+    font-size:14px;
+    line-height:1.7;
+    color:var(--ink-dim);
+    margin:0 0 18px;
+  }
+  .buy-btn{
+    font-family:'Poppins',sans-serif;
+    font-weight:500;
+    font-size:14px;
+    background:var(--pink-deep);
+    color:#fff;
+    text-align:center;
+    padding:15px;
+    border-radius:30px;
+    text-decoration:none;
+    transition:background .25s ease, transform .25s ease;
+    box-shadow:var(--shadow);
+  }
+  .buy-btn:hover{background:#B75A72;transform:translateY(-1px);}
+  .buy-note{
+    font-family:'Poppins',sans-serif;
+    font-size:11px;
+    color:var(--ink-dim);
+    margin-top:10px;
+    text-align:center;
+  }
+
+  @media (max-width:720px){
+    .track-row{
+      grid-template-columns:28px 1fr;
+      row-gap:12px;
+    }
+    .track-price, .track-toggle{grid-column:2;justify-self:start;}
+    .track-panel-inner{grid-template-columns:1fr;padding-left:20px;padding-right:20px;}
+    .branch{opacity:0.5;width:70vw;}
+  }
+
+  /* ---------- CONTACT ---------- */
+  .contact-card{
+    background:var(--bg-raised);
+    border:1px solid var(--line);
+    border-radius:24px;
+    padding:56px 6vw;
+    text-align:center;
+    box-shadow:var(--shadow);
+  }
+  .contact-title{
+    font-family:'Cormorant Garamond',serif;
+    font-style:italic;
+    font-weight:600;
+    font-size:clamp(28px,4vw,42px);
+    margin:0;
+    color:var(--ink);
+  }
+  .contact .subtitle{margin-left:auto;margin-right:auto;text-align:center;}
+  .contact-links{
+    display:flex;
+    justify-content:center;
+    gap:20px;
+    flex-wrap:wrap;
+  }
+  .contact-link{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+    gap:4px;
+    text-decoration:none;
+    background:var(--bg);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:16px 24px;
+    min-width:230px;
+    transition:all .25s ease;
+  }
+  .contact-link:hover{
+    border-color:var(--pink-deep);
+    box-shadow:var(--shadow);
+    transform:translateY(-2px);
+  }
+  .contact-label{
+    font-family:'Poppins',sans-serif;
+    font-size:11px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--sage);
+    font-weight:500;
+  }
+  .contact-value{
+    font-family:'Poppins',sans-serif;
+    font-size:15px;
+    color:var(--pink-deep);
+    font-weight:500;
+  }
+
+  /* ---------- FOOTER ---------- */
+  footer{
+    position:relative;
+    z-index:2;
+    border-top:1px solid var(--line);
+    padding:40px 6vw 60px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:20px;
+    font-family:'Poppins',sans-serif;
+    font-size:12px;
+    color:var(--ink-dim);
+  }
+  footer a{text-decoration:none;}
+  footer a:hover{color:var(--pink-deep);}
+  .footer-links a{margin-left:20px;}
+</style>
+</head>
+<body>
+
+  <div class="petal-field" id="petalField" aria-hidden="true"></div>
+  <div class="mode-flash" id="modeFlash" aria-hidden="true"></div>
+  <button class="mode-toggle" id="modeToggle" onclick="toggleMode()" type="button">🌙 Dark Mode</button>
+
+  <nav class="nav">
+    <span class="nav-brand">Litwanbabyman</span>
+    <span class="nav-links">
+      <a href="#beats">Beats</a>
+      <a href="#contact">Contact</a>
+      <a href="https://www.instagram.com/prodlitwanbabyman" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://www.soundclick.com/litwanbabyman" target="_blank" rel="noopener">SoundClick</a>
+    </span>
+  </nav>
+
+  <section class="hero">
+    <svg class="branch" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+      <path d="M390 10 C 320 60, 260 40, 220 100 C 190 145, 210 170, 170 210 C 140 240, 130 280, 90 320" stroke="#C99A87" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <path d="M260 70 C 240 50, 230 30, 245 15" stroke="#C99A87" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <g fill="#F5B4C4" opacity="0.9">
+        <ellipse cx="245" cy="20" rx="14" ry="10" transform="rotate(20 245 20)"/>
+        <ellipse cx="270" cy="10" rx="12" ry="9" transform="rotate(-10 270 10)"/>
+      </g>
+      <g fill="#EFC7D3" opacity="0.95">
+        <ellipse cx="215" cy="105" rx="16" ry="11" transform="rotate(35 215 105)"/>
+        <ellipse cx="195" cy="130" rx="13" ry="10" transform="rotate(-15 195 130)"/>
+        <ellipse cx="230" cy="130" rx="11" ry="9" transform="rotate(60 230 130)"/>
+      </g>
+      <g fill="#F5B4C4" opacity="0.9">
+        <ellipse cx="165" cy="215" rx="15" ry="11" transform="rotate(10 165 215)"/>
+        <ellipse cx="140" cy="245" rx="13" ry="10" transform="rotate(-25 140 245)"/>
+      </g>
+      <g fill="#EFC7D3" opacity="0.9">
+        <ellipse cx="95" cy="325" rx="16" ry="11" transform="rotate(30 95 325)"/>
+        <ellipse cx="70" cy="345" rx="12" ry="9" transform="rotate(-5 70 345)"/>
+      </g>
+    </svg>
+    <div class="hero-inner">
+      <p class="eyebrow">UK Producer · Since 2025</p>
+      <h1 class="title">Litwan<span class="accent">baby</span>man</h1>
+      <p class="subtitle">Soft on the ears, hard in the mix. Rage &amp; drill instrumentals in the pocket of <b>Ken Carson</b>, <b>Playboi Carti</b> &amp; <b>21 Savage</b> — stream the preview, license the beat, get your files instantly.</p>
+      <div class="hero-cta">
+        <a class="btn btn-solid" href="#beats">Browse Beats</a>
+        <a class="btn btn-ghost" href="https://www.soundclick.com/litwanbabyman" target="_blank" rel="noopener">Full Catalog on SoundClick</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="beats">
+    <div class="section-head">
+      <h2>Tracklist</h2>
+      <p id="beatCount">Loading beats…</p>
+    </div>
+
+    <div class="filter-bar">
+      <input type="text" class="filter-search" id="searchInput" placeholder="Search beats by name…">
+      <div class="filter-pills" id="filterPills"></div>
+    </div>
+
+    <div id="trackList"></div>
+  </section>
+
+  <section class="section contact" id="contact">
+    <div class="contact-card">
+      <p class="eyebrow" style="margin-bottom:10px;">Say Hello</p>
+      <h2 class="contact-title">Got a song that needs a beat?</h2>
+      <p class="subtitle" style="margin:14px 0 30px;">Reach out for custom work, exclusive rights, or just to talk about a track.</p>
+      <div class="hero-cta" style="justify-content:center;margin-bottom:30px;">
+        <a class="btn btn-solid" href="mailto:yourlocalbabyman@gmail.com?subject=Custom%20Beat%20Request&body=Hey%20Litwanbabyman%2C%0A%0AI'm%20looking%20for%20a%20custom%20beat.%20Here's%20what%20I%20have%20in%20mind%3A%0A">Commission a Custom Beat</a>
+      </div>
+      <div class="contact-links">
+        <a class="contact-link" href="mailto:yourlocalbabyman@gmail.com">
+          <span class="contact-label">Email</span>
+          <span class="contact-value">yourlocalbabyman@gmail.com</span>
+        </a>
+        <a class="contact-link" href="https://www.instagram.com/prodlitwanbabyman" target="_blank" rel="noopener">
+          <span class="contact-label">Follow Along</span>
+          <span class="contact-value">@prodlitwanbabyman on Instagram</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>© 2026 Litwanbabyman</span>
+    <span class="footer-links">
+      <a href="mailto:yourlocalbabyman@gmail.com">Email</a>
+      <a href="https://www.instagram.com/prodlitwanbabyman" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://www.youtube.com/@ProdLitwanbabyman" target="_blank" rel="noopener">YouTube</a>
+      <a href="https://www.soundclick.com/litwanbabyman" target="_blank" rel="noopener">SoundClick</a>
+    </span>
+  </footer>
+
+  <script>
+    /* =========================================================
+       BEAT SOURCE
+       -----------------------------------------------------------
+       Paste your published Google Sheet CSV link below to make
+       adding beats as easy as adding a row. Until you set that up
+       (or if the sheet is briefly unreachable), the site falls
+       back to the list in FALLBACK_BEATS below.
+       See the setup instructions in chat for exact steps.
+       ========================================================= */
+    const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSIRyGbaNOQhfbq-oS1lQ2Xocb8iur2pqMu7xBxaehQkfqotpVaoSM8FyoZQmew3c_Xo_nLEOWqExyi/pub?gid=0&single=true&output=csv"; // <-- published-to-web CSV link
+
+    const FALLBACK_BEATS = [
+      {
+        num:'01', title:'Slayr x Waera Type Beat', category:'Trap',
+        tags:['Trap','808','Slayr','Waera'], price:'From $9', badge:'hot',
+        desc:'A loud, high-energy trap instrumental built around a driving 808 and a melody that rides loose over the low end. Leans into the Slayr / Waera sound.',
+        youtubeId:'dOo20DvEcRE', songId:'15283979', priceNote:'MP3 / WAV / Trackout options at checkout'
+      },
+      {
+        num:'02', title:'Nine Vicious Sample Type Beat — "With You"', category:'Rap',
+        tags:['Rap','Nine Vicious','Sample'], price:'From $9', badge:'',
+        desc:'A moody, sample-driven cut in the Nine Vicious pocket, with the bassline and lead sitting tight in the same rhythmic lane throughout.',
+        youtubeId:'0icWgosGkPE', songId:'15279230', priceNote:'MP3 / WAV / Trackout options at checkout'
+      },
+      {
+        num:'03', title:'21 Savage Redrum Type Beat — "Dumb N*s"', category:'Drill',
+        tags:['Drill','21 Savage','Gangster'], price:'Free / $9', badge:'',
+        desc:'A dark, gangster-leaning drill instrumental in the Redrum style — built for artists chasing that 21 Savage-adjacent pocket.',
+        youtubeId:'aTrC1j0e2yg', songId:'15268058', priceNote:'Free tagged download or paid license at checkout'
+      },
+      {
+        num:'04', title:'"Important" — Prettifun x raininglol x Slayr Beat', category:'Trap',
+        tags:['Trap','Underground','Prettifun'], price:'From $9', badge:'new',
+        desc:'An underground trap beat with a hazy, late-night atmosphere — pulling from the Prettifun / raininglol / Slayr corner of the scene.',
+        youtubeId:'TBJCaG_DgaE', songId:'15238441', priceNote:'MP3 / WAV / Trackout options at checkout'
+      }
+    ];
+
+    const BAND_ID = '1541555';
+    let ALL_BEATS = [];
+    let activeCategory = 'All';
+    let activeSearch = '';
+
+    function parseCSVLine(line){
+      const out = [];
+      let cur = '', inQuotes = false;
+      for(let i=0;i<line.length;i++){
+        const c = line[i];
+        if(inQuotes){
+          if(c === '"'){
+            if(line[i+1] === '"'){ cur += '"'; i++; }
+            else inQuotes = false;
+          } else cur += c;
+        } else {
+          if(c === '"') inQuotes = true;
+          else if(c === ','){ out.push(cur); cur=''; }
+          else cur += c;
+        }
+      }
+      out.push(cur);
+      return out;
+    }
+
+    function parseCSV(text){
+      const lines = text.split(/\r?\n/).filter(l => l.trim().length);
+      if(!lines.length) return [];
+      const headers = parseCSVLine(lines[0]).map(h => h.trim());
+      return lines.slice(1).map(line => {
+        const cols = parseCSVLine(line);
+        const obj = {};
+        headers.forEach((h,i) => obj[h] = (cols[i] || '').trim());
+        return {
+          num: obj.Number || '',
+          title: obj.Title || '',
+          category: obj.Category || '',
+          tags: (obj.Tags || '').split(';').map(t => t.trim()).filter(Boolean),
+          price: obj.Price || '',
+          priceNote: obj.PriceNote || '',
+          desc: obj.Description || '',
+          youtubeId: obj.YouTubeID || '',
+          songId: obj.SongID || '',
+          badge: (obj.Badge || '').toLowerCase()
+        };
+      }).filter(b => b.title && b.youtubeId);
+    }
+
+    async function loadBeats(){
+      let beats = FALLBACK_BEATS;
+      if(SHEET_CSV_URL){
+        try{
+          const res = await fetch(SHEET_CSV_URL, {cache:'no-store'});
+          const text = await res.text();
+          const parsed = parseCSV(text);
+          if(parsed.length) beats = parsed;
+        } catch(e){
+          console.warn('Could not load Google Sheet, showing fallback beats.', e);
+        }
+      }
+      ALL_BEATS = beats.map((b,i) => ({...b, num: b.num || String(i+1).padStart(2,'0')}));
+      buildFilterPills();
+      renderBeats();
+    }
+
+    function buildFilterPills(){
+      const wrap = document.getElementById('filterPills');
+      const cats = ['All', ...new Set(ALL_BEATS.map(b => b.category).filter(Boolean))];
+      wrap.innerHTML = cats.map(cat =>
+        `<button type="button" class="filter-pill${cat===activeCategory ? ' active':''}" data-cat="${cat}">${cat}</button>`
+      ).join('');
+      wrap.querySelectorAll('.filter-pill').forEach(btn => {
+        btn.addEventListener('click', () => {
+          activeCategory = btn.getAttribute('data-cat');
+          wrap.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          renderBeats();
+        });
+      });
+    }
+
+    function renderBeats(){
+      const list = document.getElementById('trackList');
+      const countEl = document.getElementById('beatCount');
+      const term = activeSearch.trim().toLowerCase();
+
+      const filtered = ALL_BEATS.filter(b => {
+        const matchesCategory = activeCategory === 'All' || b.category === activeCategory;
+        const matchesSearch = !term || b.title.toLowerCase().includes(term) ||
+          b.tags.some(t => t.toLowerCase().includes(term));
+        return matchesCategory && matchesSearch;
+      });
+
+      countEl.textContent = `${filtered.length} Beat${filtered.length===1?'':'s'} · Licenses from $9`;
+
+      if(!filtered.length){
+        list.innerHTML = '<p class="no-results">No beats match that search — try another tag or term.</p>';
+        return;
+      }
+
+      list.innerHTML = filtered.map((b, idx) => {
+        const badge = b.badge === 'new' ? '<span class="badge badge-new">New</span>'
+          : b.badge === 'hot' ? '<span class="badge badge-hot">Hot</span>' : '';
+        const tagsHtml = b.tags.map(t => `<span class="tag">${t}</span>`).join('');
+        const buyUrl = `https://www.soundclick.com/store/orderLicense.cfm?bandID=${BAND_ID}&songID=${b.songId}`;
+        return `
+          <div class="track">
+            <div class="track-row" onclick="toggleTrack(${idx})">
+              <span class="track-num">${b.num}</span>
+              <div class="track-info">
+                <h3>${b.title}${badge}</h3>
+                <div class="track-tags">${tagsHtml}</div>
+              </div>
+              <span class="track-price">${b.price}</span>
+              <button class="track-toggle" id="toggle-${idx}">Preview ▾</button>
+            </div>
+            <div class="track-panel" id="panel-${idx}">
+              <div class="track-panel-inner">
+                <div class="yt-wrap">
+                  <iframe data-src="https://www.youtube.com/embed/${b.youtubeId}?rel=0" title="${b.title}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+                </div>
+                <div class="panel-side">
+                  <div>
+                    <p class="panel-desc">${b.desc}</p>
+                    <span class="yt-fallback">Player not loading? <a href="https://youtu.be/${b.youtubeId}" target="_blank" rel="noopener">Watch on YouTube ↗</a></span>
+                  </div>
+                  <div>
+                    <a class="buy-btn" href="${buyUrl}" target="_blank" rel="noopener">Buy License — SoundClick</a>
+                    <p class="buy-note">${b.priceNote}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    function toggleTrack(idx){
+      const panel = document.getElementById('panel-' + idx);
+      const btn = document.getElementById('toggle-' + idx);
+      const iframe = panel.querySelector('iframe');
+      const isOpen = panel.classList.contains('open');
+
+      document.querySelectorAll('.track-panel').forEach(p => {
+        if(p !== panel){
+          p.classList.remove('open');
+          const f = p.querySelector('iframe');
+          if(f && f.getAttribute('src')) f.removeAttribute('src');
+        }
+      });
+      document.querySelectorAll('.track-toggle').forEach(b => { if(b !== btn) b.textContent = 'Preview ▾'; });
+
+      if(!isOpen){
+        panel.classList.add('open');
+        btn.textContent = 'Close ▴';
+        if(!iframe.getAttribute('src')) iframe.setAttribute('src', iframe.getAttribute('data-src'));
+      } else {
+        panel.classList.remove('open');
+        btn.textContent = 'Preview ▾';
+        iframe.removeAttribute('src');
+      }
+    }
+
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+      activeSearch = e.target.value;
+      renderBeats();
+    });
+
+    loadBeats();
+
+    let isDarkMode = false;
+
+    function generatePetals(mode){
+      const field = document.getElementById('petalField');
+      field.innerHTML = '';
+      const count = mode === 'dark' ? 16 : 22;
+      for(let i=0;i<count;i++){
+        const p = document.createElement('div');
+        p.className = mode === 'dark' ? 'petal drip' : 'petal bloom';
+        const left = Math.random()*100;
+
+        if(mode === 'dark'){
+          const size = 8 + Math.random()*10;
+          const fallDur = 9 + Math.random()*8;
+          const swayDur = 3 + Math.random()*3;
+          const delay = Math.random()*fallDur;
+          p.style.width = size + 'px';
+          p.style.height = (size*0.8) + 'px';
+          p.style.left = left + 'vw';
+          p.style.animationDuration = fallDur + 's, ' + swayDur + 's';
+          p.style.animationDelay = '-' + delay + 's, -' + (Math.random()*swayDur) + 's';
+        } else {
+          const size = 8 + Math.random()*10;
+          const fallDur = 9 + Math.random()*8;
+          const swayDur = 3 + Math.random()*3;
+          const delay = Math.random()*fallDur;
+          p.style.width = size + 'px';
+          p.style.height = (size*0.8) + 'px';
+          p.style.left = left + 'vw';
+          p.style.animationDuration = fallDur + 's, ' + swayDur + 's';
+          p.style.animationDelay = '-' + delay + 's, -' + (Math.random()*swayDur) + 's';
+        }
+        field.appendChild(p);
+      }
+    }
+
+    function toggleMode(){
+      isDarkMode = !isDarkMode;
+      document.body.classList.toggle('dark-mode', isDarkMode);
+      document.getElementById('modeToggle').textContent = isDarkMode ? '☀️ Soft Mode' : '🌙 Dark Mode';
+
+      const flash = document.getElementById('modeFlash');
+      flash.classList.remove('active');
+      void flash.offsetWidth; // restart the animation
+      flash.classList.add('active');
+
+      generatePetals(isDarkMode ? 'dark' : 'light');
+    }
+
+    generatePetals('light');
+  </script>
+
+</body>
+</html>
